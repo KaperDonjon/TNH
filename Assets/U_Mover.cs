@@ -6,8 +6,6 @@ public class U_Mover : MonoBehaviour
 {
     Rigidbody RB;
 
-    public float H_SurfaceCheckRad;
-    public float H_SurfaceCheckVerOfset;
     public RaycastHit SurfaceCheckHit;
 
     public float H_SidedSurfCheckRad;
@@ -21,31 +19,34 @@ public class U_Mover : MonoBehaviour
     public Vector3 Angls;
 
     public bool H_OnGround;
-    public L_Material MyGround;
-    public List<L_Material> H_GroundMaterials;
+    //public L_Material MyGround;
+    //public List<L_Material> H_GroundMaterials;
 
 
     public Vector3 HorSpeed;
 
-    public float TopHorSpeed;
-    public float HorAcc;
+    public float TopGroundSpeed;
+    public float GroundAcc;
     public float MovDir;
 
-    public float DELPrimAngl;
-    public float DELTestForc;
-    public Vector3 DeloVe;
-    public GameObject Test;
+    Transform SecMotor;
 
     public float DragParam;
 
+    public float Stupen;
+
+   // List<Collider> MyColliders;
     // Start is called before the first frame update
     void Start()
     {
         RB = transform.GetComponent<Rigidbody>();
-        H_GroundMaterials = new List<L_Material>();
+        //H_GroundMaterials = new List<L_Material>();
 
 
-        Test = new GameObject("Siursd");
+        SecMotor = new GameObject("Motor").transform;
+        SecMotor.parent = transform;
+        SecMotor.localPosition = Vector3.zero;
+
     }
 
     // Update is called once per frame
@@ -61,20 +62,33 @@ public class U_Mover : MonoBehaviour
         {
             MovDir++;
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            F_AddForc(Vector3.up, 5f);
+        }
     }
     void FixedUpdate()
     {
         float dt = Time.fixedDeltaTime;
-        Work_Move2(dt);
+        Work_Move3(dt);
     }
-
-    void Work_Move2(float dt)
+    void Work_Move3(float dt)
     {
-        LF_SurfaceCheck();
+        if (RB.velocity.y > 0.1f)
+        {
+            gameObject.layer = 13;
+        }
+        else
+        {
+            gameObject.layer = 0;
+        }
 
-        Test.transform.position = transform.position;
+        LF_SurfaceCheck();
+        Vector3 ContorolForcDir = Vector3.zero;
 
         Vector3 CurVel = RB.velocity;
+        float CurrentSpeed = CurVel.magnitude;
 
         if (H_OnGround)
         {
@@ -91,57 +105,10 @@ public class U_Mover : MonoBehaviour
             rgh = false;
         }
 
-        float WrkAng = Angls.y;
-
         RaycastHit Nhit = H_Lhit;
-        float Nang = Angls.x;
-        float Pang = Angls.z;
-        RaycastHit Phit = H_Rhit;
         if (rgh)
         {
             Nhit = H_Rhit;
-            Nang = Angls.z;
-            Phit = H_Lhit;
-            Pang = Angls.x;
-        }
-
-        bool Invan = false;
-        if (Mathf.Abs(Nang) / Nang != Mathf.Abs(Angls.y) / Angls.y && Angls.y!=0)
-        {
-            if((H_Chit.point.x < Nhit.point.x && Nang<=0) || (H_Chit.point.x > Nhit.point.x && Nang >= 0))
-            {
-                Debug.Log("ololo");
-                Invan = true;
-            }
-           
-        }
-
-        WrkAng = Nang;
-        if(Mathf.Abs(Nang) < Mathf.Abs(Angls.y))
-        {
-           // WrkAng = Angls.y;
-        }
-
-        if (Invan)
-        {
-            WrkAng = Angls.y;
-        }
-
-        //if(Nhit.point.y <= H_Chit.point.y) {
-        //    if (Mathf.Abs(Nang) < Mathf.Abs(Angls.y))
-        //    {
-               
-        //    }
-        //    WrkAng = Angls.y;
-        //    ///   WrkAng = Nang;
-        //}
-
-        Test.transform.eulerAngles = Vector3.forward * WrkAng;
-
-        Vector3 use = Test.transform.right;
-        if (!rgh)
-        {
-            use = -Test.transform.right;
         }
 
         bool invmo = false;
@@ -160,33 +127,61 @@ public class U_Mover : MonoBehaviour
             }
         }
 
-
-        Vector3 Forc = use * HorAcc;
-
-        float velo = RB.velocity.magnitude;
-        if (H_OnGround && MovDir != 0 && (velo < TopHorSpeed || invmo))
+        ContorolForcDir = (Nhit.point - H_Chit.point).normalized;
+        if( Mathf.Abs( H_Chit.point.y - Nhit.point.y) > Stupen)
         {
-
-            RB.AddForce(Forc, ForceMode.Acceleration);
+            if (rgh)
+            {
+                ContorolForcDir = Vector3.right;
+            }
+            else
+            {
+                ContorolForcDir = Vector3.left;
+            }
         }
 
-        DeloVe = Forc;
+        SecMotor.eulerAngles = Vector3.forward * Angls.y;
+        if (H_Chit.point.y == Nhit.point.y || ContorolForcDir == Vector3.zero)
+        {
+            ContorolForcDir = SecMotor.right;
+            if (!rgh)
+            {
+                ContorolForcDir = -ContorolForcDir;
+            }
+        }
+
+        ContorolForcDir.y += 0.1f;
+        ContorolForcDir = ContorolForcDir.normalized;
+        Vector3 Forc = ContorolForcDir * GroundAcc;
+
+        Debug.DrawLine(transform.position, transform.position + ContorolForcDir, Color.green, 0.1f);
+
+        if (H_OnGround && MovDir != 0 && (CurrentSpeed < TopGroundSpeed || invmo))
+        {
+            RB.AddForce(Forc, ForceMode.Acceleration);
+        }
+    }
+    public void F_AddForc(Vector3 dir, float Velo)
+    {
+        RB.AddForce(dir * Velo, ForceMode.VelocityChange);
     }
 
     void LF_SurfaceCheck()
     {
-        Vector3 RaySource = transform.position + Vector3.up * H_SurfaceCheckVerOfset;
+        float VerOfs = H_SidedSurfCheckRad + Stupen;
+
+        Vector3 RaySource = transform.position + Vector3.up * VerOfs;
         DoCast(RaySource, H_SidedSurfCheckRad);
         H_Chit = HH_Hit;
         Angls.y = HH_Angl;
 
-        float mymo = 1;
-        RaySource = transform.position + Vector3.up * H_SurfaceCheckVerOfset + Vector3.right * H_SidedSurfCheckRad*mymo;
+        float mym = 0.5f;
+        RaySource = transform.position + Vector3.up * VerOfs + Vector3.right * H_SidedSurfCheckRad*mym;
         DoCast(RaySource, H_SidedSurfCheckRad);
         H_Rhit = HH_Hit;
         Angls.z = HH_Angl;
 
-        RaySource = transform.position + Vector3.up * H_SurfaceCheckVerOfset - Vector3.right * H_SidedSurfCheckRad*mymo;
+        RaySource = transform.position + Vector3.up * VerOfs - Vector3.right * H_SidedSurfCheckRad * mym;
         DoCast(RaySource, H_SidedSurfCheckRad);
         H_Lhit = HH_Hit;
         Angls.x = HH_Angl;
@@ -222,51 +217,65 @@ public class U_Mover : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
-        if (col.GetContact(0).thisCollider.transform.tag == "Leg")
-        {
-            if (col.collider.transform.GetComponent<L_Material>())
-            {
-                L_Material wrk = col.collider.transform.GetComponent<L_Material>();
-                if (!H_GroundMaterials.Contains(wrk))
-                {
-                    H_GroundMaterials.Add(wrk);
-                }
-                MyGround = wrk;
-                H_OnGround = true;
-            }
+        //if (col.GetContact(0).thisCollider.transform.tag == "Leg")
+        //{
+        //    if (col.collider.transform.GetComponent<L_Material>())
+        //    {
+        //        L_Material wrk = col.collider.transform.GetComponent<L_Material>();
+        //        if (!H_GroundMaterials.Contains(wrk))
+        //        {
+        //            H_GroundMaterials.Add(wrk);
+        //        }
+        //        MyGround = wrk;
+        //        H_OnGround = true;
+        //    }
 
-        }
+        //}
         
     }
 
     private void OnCollisionStay(Collision col)
     {
-        if (col.GetContact(0).thisCollider.transform.tag == "Leg")
-        {
-            if (col.collider.transform.GetComponent<L_Material>())
-            {
-                L_Material wrk = col.collider.transform.GetComponent<L_Material>();
+        //if (col.GetContact(0).thisCollider.transform.tag == "Leg")
+        //{
+        //    if (col.collider.transform.GetComponent<L_Material>())
+        //    {
+        //        L_Material wrk = col.collider.transform.GetComponent<L_Material>();
 
+        //        H_OnGround = true;
+        //    }
+
+        //}
+
+        foreach(ContactPoint go in col.contacts)
+        {
+            if(go.point.y - transform.position.y < Stupen)
+            {
                 H_OnGround = true;
             }
-
         }
     }
 
     private void OnCollisionExit(Collision col)
     {
-         if (col.collider.transform.GetComponent<L_Material>())
-         {
-                L_Material wrk = col.collider.transform.GetComponent<L_Material>();
-                if (H_GroundMaterials.Contains(wrk))
-                {
-                  H_GroundMaterials.Remove(wrk);
-                }
-            if (H_GroundMaterials.Count <= 0)
-            {
-                H_OnGround = false;
-            }
-         }
+        //if (col.collider.transform.GetComponent<L_Material>())
+        //{
+        //       L_Material wrk = col.collider.transform.GetComponent<L_Material>();
+        //       if (H_GroundMaterials.Contains(wrk))
+        //       {
+        //         H_GroundMaterials.Remove(wrk);
+        //       }
+        //   if (H_GroundMaterials.Count <= 0)
+        //   {
+        //       H_OnGround = false;
+        //   }
+        //}
 
+        if (col.contacts.Length <= 0)
+        {
+            H_OnGround = false;
+        }
     }
+
+
 }
