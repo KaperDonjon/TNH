@@ -1106,7 +1106,6 @@ GameObject:
   - component: {fileID: 1337201270}
   - component: {fileID: 1337201269}
   - component: {fileID: 1337201268}
-  - component: {fileID: 1337201271}
   m_Layer: 0
   m_Name: Platform (1)
   m_TagString: Untagged
@@ -1168,7 +1167,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1337201266}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 6200000, guid: aa85ec48c5ac1f741999c961d8125c8f, type: 2}
   m_IsTrigger: 0
@@ -1187,24 +1186,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!68 &1337201271
-EdgeCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1337201266}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 1
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0
-  m_Points:
-  - {x: -0.5, y: 0}
-  - {x: 0.5, y: 0}
 --- !u!1 &1375030897
 GameObject:
   m_ObjectHideFlags: 0
@@ -1390,7 +1371,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.15}
   serializedVersion: 2
-  m_Radius: 0.18
+  m_Radius: 0.19
 --- !u!50 &1469222091
 Rigidbody2D:
   serializedVersion: 4
@@ -1466,6 +1447,7 @@ MonoBehaviour:
   DragParam: 5
   Platforms: []
   ActvPls: []
+  IgnoredPlatforms: []
 --- !u!4 &1469222095
 Transform:
   m_ObjectHideFlags: 0

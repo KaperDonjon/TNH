@@ -33,6 +33,7 @@ public class U_Mov2D : MonoBehaviour
     public List<Solid2D> Platforms;
     public List<Solid2D> ActvPls;
 
+    public List<Solid2D> IgnoredPlatforms;
     Vector2 MyPos;
     // Start is called before the first frame update
     void Start()
@@ -48,6 +49,8 @@ public class U_Mov2D : MonoBehaviour
         Grnds = new List<Solid2D>();
        Platforms = new List<Solid2D>();
         ActvPls = new List<Solid2D>();
+
+        IgnoredPlatforms = new List<Solid2D>();
     }
 
     // Update is called once per frame
@@ -208,24 +211,57 @@ public class U_Mov2D : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
+    private void OnTriggerStay2D(Collider2D col)
     {
+        GrndCnt = 0;
         if (col.transform.GetComponent<Solid2D>()) {
 
             Solid2D wrk = col.transform.GetComponent<Solid2D>();
 
-            if (!Grnds.Contains(wrk))
-            {
-                Grnds.Add(wrk);
-            }
+
+
+
 
             if (wrk.Platform && !Platforms.Contains(wrk))
             {
                 Platforms.Add(wrk);
             }
+            if (wrk.Platform)
+            {
 
-            GrndCnt++;
-            OnGrnd = true;
+                if (ActvPls.Contains(wrk))
+                {
+                    if (!Grnds.Contains(wrk))
+                    {
+                        GrndCnt++;
+                        Grnds.Add(wrk);
+                    }
+                    else
+                    {
+                        GrndCnt++;
+                    }
+                    
+                }
+            }
+            else
+            {
+                if (!Grnds.Contains(wrk))
+                {
+                    Grnds.Add(wrk);
+                    GrndCnt++;
+                }
+                else
+                {
+                    GrndCnt++;
+                }
+                
+            }
+
+            if (GrndCnt > 0)
+            {
+                OnGrnd = true;
+            }
+
         }
     }
 
