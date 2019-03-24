@@ -6,6 +6,7 @@ public class U_Mov2D : MonoBehaviour
 {
     Rigidbody2D RB;
 
+    public float TestRad;
     public float CheckRad;
     public float StepOffset;
 
@@ -29,17 +30,24 @@ public class U_Mov2D : MonoBehaviour
     int GrndCnt;
 
     List<Solid2D> Grnds;
+    public List<Solid2D> Platforms;
+    public List<Solid2D> ActvPls;
 
+    Vector2 MyPos;
     // Start is called before the first frame update
     void Start()
     {
         RB = transform.GetComponent<Rigidbody2D>();
 
-        Grnds = new List<Solid2D>();
+
 
         SecMotor = new GameObject("Motor").transform;
         SecMotor.parent = transform;
         SecMotor.localPosition = Vector3.zero;
+
+        Grnds = new List<Solid2D>();
+       Platforms = new List<Solid2D>();
+        ActvPls = new List<Solid2D>();
     }
 
     // Update is called once per frame
@@ -55,6 +63,11 @@ public class U_Mov2D : MonoBehaviour
         {
             MoveDir++;
         }
+
+        if (Input.GetKeyDown(KeyCode.Space) && OnGrnd)
+        {
+            RB.AddForce(Vector2.up * 6f, ForceMode2D.Impulse);
+        }
     }
 
     private void FixedUpdate()
@@ -66,7 +79,9 @@ public class U_Mov2D : MonoBehaviour
 
     void LF_WorkMov(float dt)
     {
-        Vector2 MyPos = transform.position;
+        LF_CheckPlatforms();
+
+        MyPos = transform.position;
         float SideMoveMod = Mathf.Abs(MoveDir) / MoveDir;
 
         Vector2 CurVel = RB.velocity;
@@ -126,8 +141,14 @@ public class U_Mov2D : MonoBehaviour
         if (MoveDir!=0)
         {
             float AccParam = GroundMoveAcc;
+            if (!OnGrnd)
+            {
+                AccParam = 0.1f;
+                LocMovDir = Vector2.right* SideMoveMod;
+                CurSpd = Mathf.Abs( CurVel.x);
+            }
 
-            if(OnGrnd &&(CurSpd<GroundMoveTopSpeed || InvMove))
+            if(CurSpd<GroundMoveTopSpeed || InvMove)
             {
                 RB.AddForce(LocMovDir * AccParam, ForceMode2D.Impulse);
             }
@@ -152,7 +173,9 @@ public class U_Mov2D : MonoBehaviour
 
                 if (TempHit.distance > goh.distance)
                 {
-                    if (!wrk.Platform || (wrk.Platform && Grnds.Contains(wrk)))
+
+
+                    if (!wrk.Platform || (wrk.Platform && ActvPls.Contains(wrk)))
                     {
                         TempHit = goh;
                     }
@@ -163,6 +186,27 @@ public class U_Mov2D : MonoBehaviour
         TempAngl = 90 - Vector2.Angle(TempHit.normal, Vector2.right);
     }
 
+    void LF_CheckPlatforms()
+    {
+
+        ActvPls.Clear();
+        RaycastHit2D[] hit = Physics2D.CircleCastAll(MyPos + Vector2.up * TestRad*2f, TestRad, Vector2.down, TestRad * 3);
+        foreach(RaycastHit2D goh in hit)
+        {
+            if (goh.collider.transform.GetComponent<Solid2D>())
+            {
+                Solid2D wrk = goh.collider.transform.GetComponent<Solid2D>();
+                if (Platforms.Contains(wrk))
+                {
+                    if (goh.distance >= TestRad)
+                    {
+                        ActvPls.Add(wrk);
+                    }
+                    Debug.Log(goh.distance);
+                }
+            }
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D col)
     {
@@ -175,10 +219,16 @@ public class U_Mov2D : MonoBehaviour
                 Grnds.Add(wrk);
             }
 
+            if (wrk.Platform && !Platforms.Contains(wrk))
+            {
+                Platforms.Add(wrk);
+            }
+
             GrndCnt++;
             OnGrnd = true;
         }
     }
+
 
     private void OnTriggerExit2D(Collider2D col)
     {
@@ -195,6 +245,11 @@ public class U_Mov2D : MonoBehaviour
             if (GrndCnt <= 0)
             {
                 OnGrnd = false;
+            }
+
+            if (wrk.Platform && Platforms.Contains(wrk))
+            {
+                Platforms.Remove(wrk);
             }
         }
 
