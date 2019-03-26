@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/Move2D.unity
+    guid: 44441e6901b3dde4ea79041459ee23d0
   m_configObjects: {}

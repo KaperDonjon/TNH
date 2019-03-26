@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class U_Mov2D : MonoBehaviour
 {
+    // доработать движение вдоль поверхности
+    // доработать спрыг с платформы
+    // улучшить взбирание на ступеньки
+    // убрать и спрятать переменные
+    // отрегулировать прыжок
+
     Rigidbody2D RB;
 
     public float TestRad;
@@ -35,6 +41,17 @@ public class U_Mov2D : MonoBehaviour
 
     public List<Solid2D> IgnoredPlatforms;
     Vector2 MyPos;
+
+    public bool NoPlatform;
+    float NoPlatformTimer;
+
+    bool JumpStart;
+    public bool Jump;
+    public float JumpForc;
+    public float JumpCharge;
+    float CurJumpCharge;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,28 +74,67 @@ public class U_Mov2D : MonoBehaviour
     void Update()
     {
 
-        MoveDir = 0;
-        if (Input.GetKey(KeyCode.A))
-        {
-            MoveDir--;
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            MoveDir++;
-        }
+        MoveDir = LocCon.M.HorDir;
 
-        if (Input.GetKeyDown(KeyCode.Space) && OnGrnd)
+        Jump = LocCon.M.Jump;
+
+        if (LocCon.M.Down)
         {
-            RB.AddForce(Vector2.up * 6f, ForceMode2D.Impulse);
+            NoPlatformTimer = 0.3f;
         }
     }
 
     private void FixedUpdate()
     {
         float dt = Time.fixedDeltaTime;
-        LF_WorkMov(dt);
-    }
 
+        if (NoPlatformTimer > 0)
+        {
+            NoPlatform = true;
+            NoPlatformTimer -= dt;
+        }
+        else
+        {
+            NoPlatform = false;
+        }
+        if (NoPlatform)
+        {
+            gameObject.layer = 13;
+        }
+        else
+        {
+            gameObject.layer = 0;
+        }
+
+        LF_WorkJump(dt);
+
+        LF_WorkMov(dt);
+
+
+    }
+    void LF_WorkJump(float dt)
+    {
+        if (Jump)
+        {
+            if (JumpStart)
+            {
+                JumpStart = false;
+                RB.velocity += JumpForc*Vector2.up;
+            }
+            if (CurJumpCharge > 0)
+            {
+                RB.AddForce(Vector3.up * 10, ForceMode2D.Force);
+                CurJumpCharge -= dt;
+            }
+
+            OnGrnd = false;
+        }
+        if (OnGrnd)
+        {
+            JumpStart = true;
+            CurJumpCharge = JumpCharge;
+        }
+    }
 
     void LF_WorkMov(float dt)
     {
@@ -138,11 +194,17 @@ public class U_Mov2D : MonoBehaviour
         }
 
 
-        LocMovDir.y += 0.1f;
-        LocMovDir = LocMovDir.normalized;
+        //LocMovDir.y += 0.1f;
+        //LocMovDir = LocMovDir.normalized;
 
         if (MoveDir!=0)
         {
+
+            if(LocMovDir.y<0 && Vector2.Angle( CurVel, LocMovDir) > 5f && OnGrnd)
+            {
+                RB.velocity = LocMovDir * CurSpd;
+            }
+
             float AccParam = GroundMoveAcc;
             if (!OnGrnd)
             {
@@ -193,22 +255,28 @@ public class U_Mov2D : MonoBehaviour
     {
 
         ActvPls.Clear();
-        RaycastHit2D[] hit = Physics2D.CircleCastAll(MyPos + Vector2.up * TestRad*2f, TestRad, Vector2.down, TestRad * 3);
-        foreach(RaycastHit2D goh in hit)
+
+        if (!NoPlatform)
         {
-            if (goh.collider.transform.GetComponent<Solid2D>())
+            RaycastHit2D[] hit = Physics2D.CircleCastAll(MyPos + Vector2.up * TestRad * 2f, TestRad, Vector2.down, TestRad * 3);
+            foreach (RaycastHit2D goh in hit)
             {
-                Solid2D wrk = goh.collider.transform.GetComponent<Solid2D>();
-                if (Platforms.Contains(wrk))
+                if (goh.collider.transform.GetComponent<Solid2D>())
                 {
-                    if (goh.distance >= TestRad)
+                    Solid2D wrk = goh.collider.transform.GetComponent<Solid2D>();
+                    if (Platforms.Contains(wrk))
                     {
-                        ActvPls.Add(wrk);
+                        if (goh.distance >= TestRad)
+                        {
+                            ActvPls.Add(wrk);
+                        }
                     }
-                    Debug.Log(goh.distance);
                 }
             }
         }
+
+
+
     }
 
     private void OnTriggerStay2D(Collider2D col)
@@ -219,29 +287,30 @@ public class U_Mov2D : MonoBehaviour
             Solid2D wrk = col.transform.GetComponent<Solid2D>();
 
 
-
-
-
-            if (wrk.Platform && !Platforms.Contains(wrk))
-            {
-                Platforms.Add(wrk);
-            }
             if (wrk.Platform)
             {
-
-                if (ActvPls.Contains(wrk))
+                if (!NoPlatform)
                 {
-                    if (!Grnds.Contains(wrk))
+                    if (!Platforms.Contains(wrk))
                     {
-                        GrndCnt++;
-                        Grnds.Add(wrk);
+                        Platforms.Add(wrk);
                     }
-                    else
+
+                    if (ActvPls.Contains(wrk))
                     {
-                        GrndCnt++;
+                        if (!Grnds.Contains(wrk))
+                        {
+                            GrndCnt++;
+                            Grnds.Add(wrk);
+                        }
+                        else
+                        {
+                            GrndCnt++;
+                        }
+
                     }
-                    
                 }
+
             }
             else
             {

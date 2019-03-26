@@ -6,9 +6,13 @@ public class LocCon : MonoBehaviour
 {
     public static LocCon M;
     public Vector2 Dir;
-
+    public float HorDir;
+    public bool Up;
+    public bool Down;
     public bool Sprint;
     public bool Jump;
+
+    public float MouseScroll;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,21 +23,30 @@ public class LocCon : MonoBehaviour
     void Update()
     {
         Dir = Vector2.zero;
+        HorDir = 0;
         if (Input.GetKey(KeyCode.A))
         {
+            HorDir--;
             Dir += Vector2.left;
         }
         if (Input.GetKey(KeyCode.D))
         {
+            HorDir++;
             Dir += Vector2.right;
         }
+
+        Up = false;
         if (Input.GetKey(KeyCode.W))
         {
+            Up = true;
             Dir += Vector2.up;
         }
+
+        Down = false;
         if (Input.GetKey(KeyCode.S))
         {
             Dir += Vector2.down;
+            Down = true;
         }
 
         Dir = Dir.normalized;
@@ -48,5 +61,8 @@ public class LocCon : MonoBehaviour
         {
             Jump = true;
         }
+
+        MouseScroll = 0;
+        MouseScroll = Input.mouseScrollDelta.y;
     }
 }
