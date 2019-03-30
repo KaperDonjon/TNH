@@ -37,6 +37,7 @@ public class TileSet
 {
     public string ID;
     public float TileSize;
+    public Sprite Icon;
 
     public List<Sprite> Center;
     public List<Sprite> Right;

@@ -9,7 +9,9 @@ public class U_Mov2D : MonoBehaviour
     // улучшить взбирание на ступеньки
     // убрать и спрятать переменные
     // отрегулировать прыжок
+    // ограничить ускорение передвижения максимальной скоростью
 
+    Unit Me;
     Rigidbody2D RB;
 
     public float TestRad;
@@ -53,6 +55,11 @@ public class U_Mov2D : MonoBehaviour
 
 
     // Start is called before the first frame update
+    public void Init(Unit main)
+    {
+        Me = main;
+    }
+
     void Start()
     {
         RB = transform.GetComponent<Rigidbody2D>();

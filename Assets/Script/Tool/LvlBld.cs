@@ -32,7 +32,14 @@ public class LvlBld : MonoBehaviour
     public GameObject GroupSizeButton;
 
     public string GroupTileID;
+    int LastGrpInd;
     public GameObject GroupPrefab;
+
+    public enum E_EditModeType {Non, Group, Geom, Obj}
+    E_EditModeType CurEditMode;
+
+    GameObject GrpInterface;
+    GameObject GrpListPoint;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,6 +50,19 @@ public class LvlBld : MonoBehaviour
             LevelRoot.tag = "LevelRoot";
         }
         ViewPoint.transform.position = Vector3.zero;
+
+        foreach(Mark go in transform.GetComponentsInChildren<Mark>())
+        {
+            if(go.Key == "GrpInt")
+            {
+                GrpInterface = go.gameObject;
+                GrpInterface.SetActive(false);
+            }
+            if(go.Key == "GrpList")
+            {
+                GrpListPoint = go.gameObject;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -62,82 +82,128 @@ public class LvlBld : MonoBehaviour
 
     void Work_GrpControl()
     {
-        Lvl_BlockGroup n1grp = null;
-
-        if (MyActvBlockGrp != null)
+        if(CurEditMode == E_EditModeType.Group)
         {
-            if (MyActvBlockGrp.Actv)
+            if (!GrpInterface.activeSelf)
             {
-                GroupMarker.transform.position = MyActvBlockGrp.MyPos-(Vector3.right+Vector3.up)*MyActvBlockGrp.BlockSiz*0.5f;
-                GroupMarker.transform.localScale = (MyActvBlockGrp.MySiz+Vector3.one) * MyActvBlockGrp.BlockSiz;
+                GrpInterface.SetActive(true);
+                F_BuildListForGroup(LastGrpInd);
+            }
+            
 
-
-
-                if (GrpModType == "ReSiz")
+            if (MyActvBlockGrp != null)
+            {
+                if (MyActvBlockGrp.Actv)
                 {
-                    MyActvBlockGrp.F_SetSize(ToolPos + MousePosDelta);
+                    GroupMarker.transform.position = MyActvBlockGrp.MyPos - (Vector3.right + Vector3.up) * MyActvBlockGrp.BlockSiz * 0.5f;
+                    GroupMarker.transform.localScale = (MyActvBlockGrp.MySiz + Vector3.one) * MyActvBlockGrp.BlockSiz;
 
+
+
+                    if (GrpModType == "ReSiz")
+                    {
+                        MyActvBlockGrp.F_SetSize(ToolPos + MousePosDelta);
+
+                    }
+                    if (GrpModType == "RePos")
+                    {
+                        MyActvBlockGrp.transform.position = ToolPos + SnapToGrid(MousePosDelta);
+                    }
                 }
-                if (GrpModType == "RePos")
+
+
+
+
+                if (Input.GetMouseButtonUp(0))
                 {
-                    MyActvBlockGrp.transform.position = ToolPos + SnapToGrid(MousePosDelta);
+                    if (GrpModType == "ReSiz")
+                    {
+                        MyActvBlockGrp.F_ShowGeom();
+
+                    }
+                    GrpModType = "Non";
+                }
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (CheckMark("Gico"))
+                    {
+                        Debug.Log(ToolHit.collider.transform.GetComponent<Mark>().SubKey);
+
+                        MyActvBlockGrp.F_ChangeTileID(ToolHit.collider.transform.GetComponent<Mark>().SubKey);
+                        F_BuildListForGroup(ToolHit.collider.transform.GetComponent<Mark>().Num);
+
+                    }
+                    else
+                    {
+
+                        StrtMousePos = MousePos;
+                        if (CheckMark("RePosGroup"))
+                        {
+                            GrpModType = "RePos";
+                            ToolPos = MyActvBlockGrp.transform.position;
+                        }
+                        else
+                        {
+                            if (CheckMark("ReSizeGroup"))
+                            {
+                                GrpModType = "ReSiz";
+                                ToolPos = MyActvBlockGrp.MySiz;
+                            }
+                        }
+                    }
+
+
                 }
             }
-
-
-
-
-            if (Input.GetMouseButtonUp(0))
+            else
             {
-                if (GrpModType == "ReSiz")
+                if (Input.GetMouseButtonDown(0))
                 {
-                    MyActvBlockGrp.F_ShowGeom();
-
+                    if (CheckMark("Gico"))
+                    {
+                        Debug.Log(ToolHit.collider.transform.GetComponent<Mark>().SubKey);
+                        F_BuildListForGroup(ToolHit.collider.transform.GetComponent<Mark>().Num);
+                    }
                 }
-                GrpModType = "Non";
+
+                GroupMarker.transform.position = Vector3.back * 50f;
             }
-            if (Input.GetMouseButtonDown(0))
+
+            if (Input.GetMouseButtonDown(1))
             {
-                StrtMousePos = MousePos;
-                if (CheckMark("RePosGroup"))
+                if (CheckMark("Block"))
                 {
-                    GrpModType = "RePos";
-                    ToolPos = MyActvBlockGrp.transform.position;
+                    SetActiveGrp(ToolHit.collider.transform.GetComponentInParent<Lvl_BlockGroup>());
                 }
                 else
                 {
-                    if (CheckMark("ReSizeGroup"))
+                    if(MyActvBlockGrp!= null)
                     {
-                        GrpModType = "ReSiz";
-                        ToolPos = MyActvBlockGrp.MySiz;
+                        MyActvBlockGrp.Actv = false;
+                        MyActvBlockGrp = null;
                     }
+
                 }
             }
+
+
+            Vector3 ButPos = Vector3.zero;
+            foreach (Mark go in GroupMarker.transform.GetComponentsInChildren<Mark>())
+            {
+                if (go.Key == "sbut")
+                {
+                    ButPos = go.transform.position;
+                }
+            }
+
+            GroupSizeButton.transform.position = ButPos;
         }
         else
         {
-            GroupMarker.transform.position = Vector3.back * 50f;
-        }
-
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (CheckMark("Block"))
-            {
-                SetActiveGrp(ToolHit.collider.transform.GetComponentInParent<Lvl_BlockGroup>());
-            }
+            GrpInterface.SetActive(false);
         }
 
 
-        Vector3 ButPos = Vector3.zero;
-        foreach(Mark go in GroupMarker.transform.GetComponentsInChildren<Mark>())
-        {
-            if(go.Key == "sbut")
-            {
-                ButPos = go.transform.position;
-            }
-        }
-
-        GroupSizeButton.transform.position = ButPos;
     }
 
     void SetActiveGrp(Lvl_BlockGroup grp)
@@ -187,6 +253,15 @@ public class LvlBld : MonoBehaviour
         }
     }
 
+    public void F_SetGroupMode()
+    {
+        CurEditMode = E_EditModeType.Group;
+
+    }
+    public void BF_SetGeomMode()
+    {
+        CurEditMode = E_EditModeType.Geom;
+    }
     public void F_DelGroup()
     {
         if (MyActvBlockGrp!=null)
@@ -194,6 +269,64 @@ public class LvlBld : MonoBehaviour
             Destroy(MyActvBlockGrp.gameObject);
         }
     }
+
+    void F_BuildListForGroup(int strtInd)
+    {
+        string icokey = "Gico";
+        Debug.Log("Test");
+        Mark[] temp = GrpListPoint.GetComponentsInChildren<Mark>();
+        for (int go = temp.Length-1; go>=0; go--)
+        {
+            Mark wrk = temp[go];
+            if(wrk.Key == icokey)
+            {
+                Destroy(wrk.gameObject);
+            }
+        }
+
+        int wrkind = strtInd;
+        //foreach(TileSet go in Core_Base.M.TileSets)
+        //{
+        //    if(go.ID == GroupTileID)
+        //    {
+        //        wrkind = Core_Base.M.TileSets.IndexOf(go);
+        //    }
+        //}
+
+        float tilesiz = 2f;
+
+        for(int go =0; go<Core_Base.M.TileSets.Count; go++)
+        {
+            TileSet wTile = Core_Base.M.TileSets[go];
+
+            Vector3 pos = GrpListPoint.transform.position;
+            pos += Vector3.right * tilesiz * (go - wrkind);
+
+            GameObject tmp = new GameObject("Ico");
+            Mark TmpMrk = Mark.F_MarkObjWithKey(tmp, icokey);
+            TmpMrk.SubKey = wTile.ID;
+            TmpMrk.Num = go;
+
+            BoxCollider cldr = tmp.AddComponent<BoxCollider>();
+            cldr.size = Vector3.one;
+            cldr.center = -Vector3.forward * 0.5f;
+
+            SpriteRenderer rndr = tmp.AddComponent<SpriteRenderer>();
+            rndr.sprite = wTile.Icon;
+            rndr.color = Color.white;
+
+            tmp.transform.position = pos;
+
+            if (wrkind == go)
+            {
+                tmp.transform.localScale = Vector3.one * 1.2f;
+            }
+            tmp.transform.parent = GrpListPoint.transform;
+        }
+
+        LastGrpInd = strtInd;
+    }
+
     public void F_AddGroup()
     {
         Lvl_BlockGroup n1 = GameObject.Instantiate(GroupPrefab).transform.GetComponent<Lvl_BlockGroup>();

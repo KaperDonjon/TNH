@@ -7,6 +7,8 @@ public class Lvl_BlockGroup : MonoBehaviour
     public string TileID;
     public Vector3 MyPos;
     public Vector3 MySiz;
+    public int Layer;
+
     public float BlockSiz;
 
     public List<Lvl_Block> MyBlocks;
@@ -14,6 +16,8 @@ public class Lvl_BlockGroup : MonoBehaviour
     public bool Actv;
 
     public GameObject Pef;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -114,22 +118,39 @@ public class Lvl_BlockGroup : MonoBehaviour
                     tmp.Prm.BlockSize = Vector3.one*BlockSiz;
                 }
 
-                tmp.Prm.SideHor = Vector2Int.zero;
-                tmp.Prm.SideVer = Vector2Int.zero;
                 tmp.Prm.pos.x = gox;
                 tmp.Prm.pos.y = goy;
 
+                if (!tmp.Prm.Lock)
+                {
+                    tmp.Prm.F_ClearSides();
 
-                if (gox == 0) { tmp.Prm.SideHor.x++; }
-                if (goy == 0) { tmp.Prm.SideVer.x++; }
-                if (gox == xx-1) { tmp.Prm.SideHor.y++; }
-                if (goy == yy-1) { tmp.Prm.SideVer.y++; }
+
+                    if (gox == 0) { tmp.Prm.L++; }
+                    if (goy == 0) { tmp.Prm.D++; }
+                    if (gox == xx - 1) { tmp.Prm.R++; }
+                    if (goy == yy - 1) { tmp.Prm.U++; }
+                }
+
+
+
+                tmp.Layer = Layer;
 
                 MyBlocks.Add(tmp);
                 tmp.InitForEditor();
     
             }
         }
+    }
+
+    public void F_ChangeTileID(string ID)
+    {
+        Debug.Log("ChanegingID");
+        TileSet wrk = Core_Base.F_GetTileByID(ID);
+        TileID = ID;
+        BlockSiz = wrk.TileSize;
+
+        F_ShowGeom();
     }
 }
 

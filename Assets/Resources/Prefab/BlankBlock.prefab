@@ -124,9 +124,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Prm:
+    TileID: 
+    Lock: 0
     BlockSize: {x: 0, y: 0, z: 0}
     pos: {x: 0, y: 0}
-    SideHor: {x: 0, y: 0}
-    SideVer: {x: 0, y: 0}
+    C: 0
+    R: 0
+    L: 0
+    U: 0
+    D: 0
+  Layer: 0
   Renders:
   - {fileID: 6836928372186708074}
+  BaseRend: {fileID: 6836928372186708074}
