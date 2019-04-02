@@ -50,7 +50,6 @@ public class U_Mov2D : MonoBehaviour
     bool JumpStart;
     public bool Jump;
     public float JumpForc;
-    public float JumpCharge;
     float CurJumpCharge;
 
 
@@ -81,14 +80,11 @@ public class U_Mov2D : MonoBehaviour
     void Update()
     {
 
-        MoveDir = LocCon.M.HorDir;
+       // MoveDir = LocCon.M.HorDir;
 
-        Jump = LocCon.M.Jump;
 
-        if (LocCon.M.Down)
-        {
-            NoPlatformTimer = 0.3f;
-        }
+
+
     }
 
     private void FixedUpdate()
@@ -139,7 +135,7 @@ public class U_Mov2D : MonoBehaviour
         if (OnGrnd)
         {
             JumpStart = true;
-            CurJumpCharge = JumpCharge;
+            CurJumpCharge = Me.prm.JumpHeight;
         }
     }
 
@@ -243,15 +239,19 @@ public class U_Mov2D : MonoBehaviour
             {
                 Solid2D wrk = goh.collider.transform.GetComponent<Solid2D>();
 
-                if (TempHit.distance > goh.distance)
+                if(wrk.transform.GetComponentInParent<U_Mov2D>() != this)
                 {
-
-
-                    if (!wrk.Platform || (wrk.Platform && ActvPls.Contains(wrk)))
+                    if (TempHit.distance > goh.distance)
                     {
-                        TempHit = goh;
+
+
+                        if (!wrk.Platform || (wrk.Platform && ActvPls.Contains(wrk)))
+                        {
+                            TempHit = goh;
+                        }
                     }
                 }
+
             }
         }
 
@@ -284,6 +284,14 @@ public class U_Mov2D : MonoBehaviour
 
 
 
+    }
+    public void F_SetSkipPlatformTimer(float tim)
+    {
+        NoPlatformTimer = tim;
+    }
+    public void F_DoJump(bool jmp)
+    {
+        Jump = jmp;
     }
 
     private void OnTriggerStay2D(Collider2D col)

@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class U_Param : MonoBehaviour
+public class Core_Procces : MonoBehaviour
 {
-    Unit Me;
-    public float JumpHeight;
-
-    public float AtkDist;
-    public float AtkDelay;
+    public static Core_Procces M;
+    public Unit LocalPlayersUnit;
     // Start is called before the first frame update
-    public void Init(Unit main)
+    void Start()
     {
-        Me = main;
+        Core_Procces.M = this;
+
     }
 
     // Update is called once per frame

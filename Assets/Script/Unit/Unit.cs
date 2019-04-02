@@ -15,17 +15,19 @@ public class Unit : MonoBehaviour
     {
         mov = transform.GetComponent<U_Mov2D>();
         mov.Init(this);
-        brn = transform.GetComponent<U_Brain>();
-        brn.Init(this);
+
         act = transform.GetComponent<U_Act>();
         act.Init(this);
         prm = transform.GetComponent<U_Param>();
         prm.Init(this);
+
+        brn = transform.GetComponent<U_Brain>();
+        brn.Init(this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        pos = transform.position;
     }
 }
