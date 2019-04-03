@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.574817, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2410,6 +2410,55 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.18
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1347764715
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1347764717}
+  - component: {fileID: 1347764716}
+  m_Layer: 0
+  m_Name: PlayerBar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1347764716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347764715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b180035ead25ba7429ca910650ac8e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HPbar: {fileID: 11400000, guid: e9a931e3b122b3a4f99e08869853f8e8, type: 2}
+  Visible: 1
+  Char: {fileID: 1877595836}
+  HPBarLane: 0
+  ManaBarLane: 0
+  StaminaBarLane: 0
+--- !u!4 &1347764717
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347764715}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.17, y: -0.41000003, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1434381692
 GameObject:
   m_ObjectHideFlags: 0
@@ -2730,8 +2779,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Dir: {x: 0, y: 0}
+  HorDir: 0
+  Up: 0
+  Down: 0
   Sprint: 0
   Jump: 0
+  MouseScroll: 0
 --- !u!4 &1616385142
 Transform:
   m_ObjectHideFlags: 0
@@ -3110,6 +3163,8 @@ GameObject:
   - component: {fileID: 1877595834}
   - component: {fileID: 1877595833}
   - component: {fileID: 1877595835}
+  - component: {fileID: 1877595838}
+  - component: {fileID: 1877595836}
   m_Layer: 0
   m_Name: Char
   m_TagString: Leg
@@ -3168,6 +3223,26 @@ CapsuleCollider:
   m_Height: 0.9
   m_Direction: 1
   m_Center: {x: 0, y: 0.45, z: 0}
+--- !u!114 &1877595836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877595832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 402960e676274eb449527931e49c20d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxHP: 100
+  MaxMana: 100
+  MaxStamina: 100
+  MaxXP: 0
+  THP: 100
+  TMana: 100
+  TStamina: 100
+  TXP: 0
 --- !u!4 &1877595837
 Transform:
   m_ObjectHideFlags: 0
@@ -3185,6 +3260,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1877595838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877595832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 591e55168a4c9de45b3126e8570150b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerStats: {fileID: 11400000, guid: 72846ef3c5ac92f4a807e2346d304f6c, type: 2}
+  Visible: 0
+  LvL: 0
+  SkillPoint: 0
+  HPpoint: 1
+  StaminaPoint: 1
+  ManaPoint: 1
+  ResistPoint: 1
+  THPpoint: 0
+  TStaminaPoint: 0
+  TManaPoint: 0
+  TResistPoint: 0
+  TLvL: 0
+  TSkillPoint: 0
 --- !u!1 &1937995648
 GameObject:
   m_ObjectHideFlags: 0
