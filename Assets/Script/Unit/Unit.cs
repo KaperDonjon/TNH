@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public U_Mov2D mov;
+    public U_Mov mov;
     public U_Brain brn;
     public U_Act act;
     public U_Param prm;
@@ -13,7 +13,7 @@ public class Unit : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mov = transform.GetComponent<U_Mov2D>();
+        mov = transform.GetComponent<U_Mov>();
         mov.Init(this);
 
         act = transform.GetComponent<U_Act>();
