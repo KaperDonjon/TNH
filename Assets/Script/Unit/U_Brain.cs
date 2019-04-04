@@ -41,11 +41,19 @@ public class U_Brain : MonoBehaviour
         }
         else
         {
-            Me.mov.MoveDir =LocCon.M.HorDir;
-            Me.mov.F_DoJump(LocCon.M.Jump);
+            Me.mov.In_HorDir =LocCon.M.HorDir;
+            if (LocCon.M.Jump)
+            {
+                Me.mov.F_DoJump(Vector3.up, 1);
+            }
+            else
+            {
+                Me.mov.F_StopJump();
+            }
+
             if (LocCon.M.Down)
             {
-                Me.mov.F_SetSkipPlatformTimer(0.3f);
+                Me.mov.F_JumpOffFromPlatform();
             }
         }
 
@@ -210,7 +218,7 @@ public class U_Brain : MonoBehaviour
     void WorkMove()
     {
         RaycastHit2D[] alh;
-        if (Me.mov.OnGrnd)
+        if (Me.mov.OnGround)
         {
             Vector3 point = Me.pos + Vector3.right * WantedMoveDir * CheckRad*2f + Vector3.up * CheckRad * 2f;
             alh = Physics2D.CircleCastAll(point, CheckRad, Vector2.down);
@@ -232,12 +240,12 @@ public class U_Brain : MonoBehaviour
             Debug.Log(Closst.distance + "   "+ (CheckRad + Me.mov.StepOffset * 2f));
             if (Closst.distance < CheckRad + Me.mov.StepOffset * 2f)
             {
-                Me.mov.MoveDir = WantedMoveDir;
+                Me.mov.In_HorDir = WantedMoveDir;
             }
             else
             {
                 Debug.Log("Stop");
-                Me.mov.MoveDir = 0;
+                Me.mov.In_HorDir = 0;
             }
 
         }
