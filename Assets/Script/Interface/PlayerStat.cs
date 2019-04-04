@@ -15,9 +15,12 @@ public class PlayerStat : MonoBehaviour
     public int TStamina;
     public int TXP;
 
+    //Тест версия резистов
+    public int Resist;
+
     void Start()
     {
-        
+
     }
 
 

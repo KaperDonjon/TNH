@@ -15,9 +15,9 @@ public class HPBarSkript : MonoBehaviour
 
     void Start()
     {
-        
+
     }
-    private void OnGUI()
+    void OnGUI()
     {
         if (Visible)
         {
@@ -36,9 +36,9 @@ public class HPBarSkript : MonoBehaviour
 
             GUI.Box(new Rect(0, 0, 256, 86), " ", GUI.skin.GetStyle("Bar"));
             GUI.Box(new Rect(0, 0, 256, 86), " ", GUI.skin.GetStyle("ManaPool"));
-            GUI.Box(new Rect(0, 0, 256 * HPBarLane, 86), " ", GUI.skin.GetStyle("HP"));
-            GUI.Box(new Rect(0, 0, 256 * ManaBarLane, 86), " ", GUI.skin.GetStyle("Mana"));
-            GUI.Box(new Rect(0, 0, 256 * StaminaBarLane, 86), " ", GUI.skin.GetStyle("Stamina"));
+            GUI.Box(new Rect(71, 20, 256 * HPBarLane, 86), " ", GUI.skin.GetStyle("HP"));
+            GUI.Box(new Rect(59, 50, 256 * ManaBarLane, 86), " ", GUI.skin.GetStyle("Mana"));
+            GUI.Box(new Rect(65, 35, 256 * StaminaBarLane, 86), " ", GUI.skin.GetStyle("Stamina"));
         }
     }
 

@@ -3243,6 +3243,7 @@ MonoBehaviour:
   TMana: 100
   TStamina: 100
   TXP: 0
+  Resist: 10
 --- !u!4 &1877595837
 Transform:
   m_ObjectHideFlags: 0
@@ -3274,6 +3275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerStats: {fileID: 11400000, guid: 72846ef3c5ac92f4a807e2346d304f6c, type: 2}
   Visible: 0
+  Char: {fileID: 0}
   LvL: 0
   SkillPoint: 0
   HPpoint: 1
