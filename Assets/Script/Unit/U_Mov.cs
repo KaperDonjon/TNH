@@ -25,6 +25,7 @@ public class U_Mov : MonoBehaviour
     float H_JumpCharge;
 
     public List<Solid2D> H_MySolids;
+    public List<Solid2D> H_CloseSolids;
     public Vector3 R_MyPos;
     public float R_TopSpeed;
     public float R_Acc;
@@ -47,8 +48,16 @@ public class U_Mov : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+    }
+
+    public void Init(Unit main)
+    {
+        Me = main;
+
         RB = transform.GetComponent<Rigidbody2D>();
         H_MySolids = new List<Solid2D>();
+        H_CloseSolids = new List<Solid2D>();
 
         Motor = new GameObject("Motor").transform;
         Motor.parent = transform;
@@ -57,11 +66,6 @@ public class U_Mov : MonoBehaviour
         Surfacer = new GameObject("Surfacer").transform;
         Surfacer.parent = transform;
         Surfacer.localPosition = Vector3.zero;
-    }
-
-    public void Init(Unit main)
-    {
-        Me = main;
     }
 
     // Update is called once per frame
@@ -100,7 +104,7 @@ public class U_Mov : MonoBehaviour
 
     private void FixedUpdate()
     {
-        R_MyPos = transform.position;
+        R_MyPos = transform.position+ Vector3.up*BaseRad;
 
         float dt = Time.fixedDeltaTime;
         Vector3 Vel = RB.velocity;
@@ -163,7 +167,7 @@ public class U_Mov : MonoBehaviour
 
                 float Acc = R_Acc;
                 float Delt = R_TopSpeed - Speed;
-                Debug.Log(Delt);
+               // Debug.Log(Delt);
 
 
                 if (Delt < 0)
@@ -207,18 +211,32 @@ public class U_Mov : MonoBehaviour
     void LF_SurfaceWork()
     {
         float CastStepOffset = BaseRad * 0.5f;
-        float CastDist = 10f;
-        Vector3 cpoint = R_MyPos + Surfacer.up * (StepOffset + BaseRad);
+        float CastDist = 5f;
+        Vector3 cpoint = R_MyPos + Surfacer.up * (StepOffset);//убрал отсюда базовый радиус
 
-        RaycastHit2D chit = LF_DoRay(cpoint, -Surfacer.up, BaseRad, CastDist);
+        H_CloseSolids.Clear();
+
+        RaycastHit2D chit = LF_DoRay(cpoint, -Surfacer.up, BaseRad, CastDist, true);
 
         Vector3 rpoint = cpoint + Surfacer.right * CastStepOffset;
-        RaycastHit2D rhit = LF_DoRay(rpoint, -Surfacer.up, BaseRad, CastDist);
+        RaycastHit2D rhit = LF_DoRay(rpoint, -Surfacer.up, BaseRad, CastDist, false);
 
         Vector3 lpoint = cpoint - Surfacer.right * CastStepOffset;
-        RaycastHit2D lhit = LF_DoRay(lpoint, -Surfacer.up, BaseRad, CastDist);
+        RaycastHit2D lhit = LF_DoRay(lpoint, -Surfacer.up, BaseRad, CastDist, false);
 
 
+        for(int lo =H_MySolids.Count-1; lo>=0; lo--)
+        {
+            Solid2D go = H_MySolids[lo];
+            if (!H_CloseSolids.Contains(go))
+            {
+                H_MySolids.RemoveAt(lo);
+            }
+        }
+        if (H_MySolids.Count <= 0)
+        {
+            OnGround = false;
+        }
         //cpoint += -Surfacer.up * chit.distance; нужная точка
 
 
@@ -254,7 +272,7 @@ public class U_Mov : MonoBehaviour
     }
 
 
-    RaycastHit2D LF_DoRay(Vector3 point, Vector3 dir, float rad, float Dist)
+    RaycastHit2D LF_DoRay(Vector3 point, Vector3 dir, float rad, float Dist, bool spec)
     {
         RaycastHit2D RezHit = new RaycastHit2D();
         RezHit.distance = 2 * Dist;
@@ -264,27 +282,45 @@ public class U_Mov : MonoBehaviour
         foreach (RaycastHit2D hit in alh)
         {
             Solid2D wrk = hit.collider.transform.GetComponent<Solid2D>();
-            bool Ignor = true;
-            if (wrk != null)
+            if (wrk != transform.GetComponentInChildren<Solid2D>())
             {
-                if (wrk.Platform)
+
+                bool Ignor = true;
+                if (wrk != null)
                 {
-                    Ignor = LF_IgnorPlatform(wrk);
-                }
-                else
-                {
-                    Ignor = false;
+                    if (wrk.Platform)
+                    {
+                        Ignor = LF_IgnorPlatform(wrk);
+                    }
+                    else
+                    {
+                        Ignor = false;
+                    }
+
+                    if (hit.point.y - R_MyPos.y > StepOffset)
+                    {
+                        Ignor = true;
+                    }
+                    if (spec)
+                    {
+                      //  Debug.Log(hit.distance + hit.collider.gameObject.name);
+                        if (hit.distance <= StepOffset * 1.1f)
+                        {
+                            H_CloseSolids.Add(wrk);
+                        }
+                    }
+
                 }
 
-            }
-
-            if (!Ignor)
-            {
-                if (RezHit.distance > hit.distance)
+                if (!Ignor)
                 {
-                    RezHit = hit;
+                    if (RezHit.distance > hit.distance)
+                    {
+                        RezHit = hit;
+                    }
                 }
             }
+
         }
         return RezHit;
 
@@ -402,43 +438,92 @@ public class U_Mov : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
+    //private void OnCollisionEnter2D(Collision2D cos)
+    //{
+    //    // H_MySolids.Clear();
+    //    // OnGround = false;
+    //    Debug.Log("FUFUFUUFU");
+    //    foreach (ContactPoint2D go in cos.contacts)
+    //    {
+    //        Solid2D wrk = go.collider.transform.GetComponent<Solid2D>();
+    //        // if(wrk != null && go.point.y - R_MyPos.y <= StepOffset+ BaseRad)
+    //        if (wrk != null && H_CloseSolids.Contains(wrk))
+    //        {
+    //            bool AddWrk = true;
+            
+    //            if(wrk.Platform)
+    //            {
+                    
+    //                if (LF_IgnorPlatform(wrk))
+    //                {
+    //                    AddWrk = false;
+    //                }
+    //            }
+
+
+    //            if (AddWrk)
+    //            {
+    //                if (!H_MySolids.Contains(wrk))
+    //                {
+    //                    H_MySolids.Add(wrk);
+    //                    OnGround = true;
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    //private void OnCollisionExit2D(Collision2D cos)
+    //{
+    //    H_MySolids.Clear();
+    //    OnGround = false;
+    //    foreach (ContactPoint2D go in cos.contacts)
+    //    {
+    //        Solid2D wrk = go.collider.transform.GetComponent<Solid2D>();
+    //        if (wrk != null && go.point.y - R_MyPos.y <= StepOffset + BaseRad)
+    //        {
+    //            bool AddWrk = true;
+
+    //            if (wrk.Platform)
+    //            {
+    //                if (LF_IgnorPlatform(wrk))
+    //                {
+    //                    AddWrk = false;
+    //                }
+    //            }
+
+
+    //            if (AddWrk)
+    //            {
+    //                if (!H_MySolids.Contains(wrk))
+    //                {
+    //                    H_MySolids.Add(wrk);
+    //                    OnGround = true;
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    private void OnCollisionStay2D(Collision2D cos)
     {
-        Solid2D wrk = col.transform.GetComponent<Solid2D>();
-        if (wrk != null)
+        //H_MySolids.Clear();
+        //OnGround = false;
+        foreach (ContactPoint2D go in cos.contacts)
         {
-
-            if (!wrk.Platform || (wrk.Platform && !LF_IgnorPlatform(wrk)))
+            Solid2D wrk = go.collider.transform.GetComponent<Solid2D>();
+            if (wrk != null && H_CloseSolids.Contains(wrk))
             {
-                if (!H_MySolids.Contains(wrk))
-                {
-                    H_MySolids.Add(wrk);
-                    OnGround = true;
-                }
+                bool AddWrk = true;
 
-            }
-        }
-    }
-
-    private void OnTriggerStay2D(Collider2D col)
-    {
-        Solid2D wrk = col.transform.GetComponent<Solid2D>();
-        if (wrk != null)
-        {
-            if (wrk.Platform)
-            {
-                if (LF_IgnorPlatform(wrk))
+                if (wrk.Platform)
                 {
-                    if (H_MySolids.Contains(wrk))
+                    if (LF_IgnorPlatform(wrk))
                     {
-                        H_MySolids.Remove(wrk);
-                        if (H_MySolids.Count <= 0)
-                        {
-                            OnGround = false;
-                        }
+                        AddWrk = false;
                     }
                 }
-                else
+
+
+                if (AddWrk)
                 {
                     if (!H_MySolids.Contains(wrk))
                     {
@@ -448,6 +533,62 @@ public class U_Mov : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        //Solid2D wrk = col.transform.GetComponent<Solid2D>();
+        //if (wrk != null && H_CloseSolids.Contains(wrk))
+        //{
+
+        //    if (!wrk.Platform || (wrk.Platform && !LF_IgnorPlatform(wrk)))
+        //    {
+        //        if (!H_MySolids.Contains(wrk))
+        //        {
+        //            H_MySolids.Add(wrk);
+        //            OnGround = true;
+        //        }
+
+        //    }
+        //}
+    }
+
+    private void OnTriggerStay2D(Collider2D col)
+    {
+        //Solid2D wrk = col.transform.GetComponent<Solid2D>();
+        //if (wrk != null && H_CloseSolids.Contains(wrk))
+        //{
+        //    if (wrk.Platform)
+        //    {
+        //        if (LF_IgnorPlatform(wrk))
+        //        {
+        //            if (H_MySolids.Contains(wrk))
+        //            {
+        //                H_MySolids.Remove(wrk);
+        //                if (H_MySolids.Count <= 0)
+        //                {
+        //                    OnGround = false;
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (!H_MySolids.Contains(wrk))
+        //            {
+        //                H_MySolids.Add(wrk);
+        //                OnGround = true;
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (!H_MySolids.Contains(wrk))
+        //        {
+        //            H_MySolids.Add(wrk);
+        //            OnGround = true;
+        //        }
+        //    }
+        //}
     }
 
     private void OnTriggerExit2D(Collider2D col)
