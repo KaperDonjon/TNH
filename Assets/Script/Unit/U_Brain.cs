@@ -237,6 +237,7 @@ public class U_Brain : MonoBehaviour
                 }
             }
 
+            Debug.Log(Closst.distance + "   "+ (CheckRad + Me.mov.StepOffset * 2f));
             if (Closst.distance < CheckRad + Me.mov.StepOffset * 2f)
             {
                 Me.mov.In_HorDir = WantedMoveDir;
