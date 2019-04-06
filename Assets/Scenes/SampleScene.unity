@@ -3286,6 +3286,16 @@ MonoBehaviour:
   TStaminaPoint: 0
   TManaPoint: 0
   TResistPoint: 0
+  Fire: 0
+  Woter: 0
+  Nature: 0
+  TFire: 0
+  TWoter: 0
+  TNature: 0
+  TMaxHP: 100
+  TMaxMana: 100
+  TMaxStamina: 100
+  TResist: 10
   TLvL: 0
   TSkillPoint: 0
 --- !u!1 &1937995648
