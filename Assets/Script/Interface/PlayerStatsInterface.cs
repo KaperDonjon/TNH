@@ -61,7 +61,11 @@ public class PlayerStatsInterface : MonoBehaviour
             LvL = TLvL;
             SkillPoint = TSkillPoint;
         }
-
+        if (ps.TXP >= ps.MaxXP)
+        {
+            TLvL += 1;
+            ps.TXP = 0;
+        }
 
 
     }
@@ -107,7 +111,7 @@ public class PlayerStatsInterface : MonoBehaviour
                 {
                     TSkillPoint -= 1;
                     HPpoint += 1;
-                    ps.MaxHP = ps.MaxHP + (HPpoint * 20);
+                    ps.MaxHP = ps.MaxHP + 20;
                 }
 
             }
@@ -117,7 +121,7 @@ public class PlayerStatsInterface : MonoBehaviour
                 {
                     TSkillPoint += 1;
                     HPpoint -= 1;
-                    ps.MaxHP = ps.MaxHP - (HPpoint * 20) - 20;
+                    ps.MaxHP = ps.MaxHP - 20;
                 }
 
             }
@@ -129,7 +133,7 @@ public class PlayerStatsInterface : MonoBehaviour
                 {
                     TSkillPoint -= 1;
                     StaminaPoint += 1;
-                    ps.MaxStamina = ps.MaxStamina + (StaminaPoint * 5);
+                    ps.MaxStamina = ps.MaxStamina + 5;
                 }
 
             }
@@ -139,7 +143,7 @@ public class PlayerStatsInterface : MonoBehaviour
                 {
                     TSkillPoint += 1;
                     StaminaPoint -= 1;
-                    ps.MaxStamina = ps.MaxStamina - (StaminaPoint * 5) - 5;
+                    ps.MaxStamina = ps.MaxStamina - 5;
                 }
 
             }
@@ -150,7 +154,7 @@ public class PlayerStatsInterface : MonoBehaviour
                 {
                     TSkillPoint -= 1;
                     ManaPoint += 1;
-                    ps.MaxMana = ps.MaxMana + (ManaPoint * 10);
+                    ps.MaxMana = ps.MaxMana +  10;
                 }
 
             }
@@ -160,7 +164,7 @@ public class PlayerStatsInterface : MonoBehaviour
                 {
                     TSkillPoint += 1;
                     ManaPoint -= 1;
-                    ps.MaxMana = ps.MaxMana - (ManaPoint * 10) - 10;
+                    ps.MaxMana = ps.MaxMana - 10;
                 }
 
             }
@@ -190,7 +194,6 @@ public class PlayerStatsInterface : MonoBehaviour
                     Woter -= 10;
                     Nature -= 10;
                 }
-
             }
 
 
@@ -240,7 +243,7 @@ public class PlayerStatsInterface : MonoBehaviour
 
 
                 //Выход
-                if (GUI.Button(new Rect(Screen.width / 2 + 150, Screen.width / 2 - 120, 50, 25), "Выйти"))
+            if (GUI.Button(new Rect(Screen.width / 2 + 150, Screen.width / 2 - 120, 50, 25), "Выйти"))
             {
                 Visible = false;
             }
@@ -254,6 +257,11 @@ public class PlayerStatsInterface : MonoBehaviour
         {
             TLvL += 1;
         }
+        if (GUI.Button(new Rect(Screen.width / 2 + 320, Screen.width / 2 - 150, 75, 20), "XP"))
+        {
+            ps.TXP += 10;
+        }
+
 
     }
 
