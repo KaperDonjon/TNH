@@ -10,6 +10,8 @@ public class Unit : MonoBehaviour
     public U_Param prm;
 
     public Vector3 pos;
+
+    public float UnitHeight;
     // Start is called before the first frame update
     void Start()
     {
