@@ -179,7 +179,6 @@ public class PlayerStatsInterface : MonoBehaviour
                     Fire += 10;
                     Woter += 10;
                     Nature += 10;
-
                 }
 
             }
@@ -214,7 +213,10 @@ public class PlayerStatsInterface : MonoBehaviour
                 TFire = Fire;
                 TWoter = Woter;
                 TNature = Nature;
-
+                TMaxHP = ps.MaxHP;
+                TMaxMana = ps.MaxMana;
+                TMaxStamina = ps.MaxStamina;
+                TResist = ps.Resist;
             }
             //Отмена
             if (GUI.Button(new Rect(Screen.width / 2 + 130, Screen.width / 2 - 150, 75, 20), "Отменить"))
@@ -230,7 +232,6 @@ public class PlayerStatsInterface : MonoBehaviour
                 Nature = TNature;
 
                 ps.MaxHP = TMaxHP; 
-                ps.MaxHP = TMaxHP;
                 ps.MaxMana = TMaxMana;
                 ps.MaxStamina = TMaxStamina;
                 ps.Resist = TResist;
