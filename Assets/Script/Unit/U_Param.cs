@@ -5,7 +5,8 @@ using UnityEngine;
 public class U_Param : MonoBehaviour
 {
     Unit Me;
-    public float JumpHeight;
+    public float MaxJumpHeight;
+    public float MaxJumpDist;
 
     public float AtkDist;
     public float AtkDelay;

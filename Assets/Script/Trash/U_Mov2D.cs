@@ -135,7 +135,7 @@ public class U_Mov2D : MonoBehaviour
         if (OnGrnd)
         {
             JumpStart = true;
-            CurJumpCharge = Me.prm.JumpHeight;
+            CurJumpCharge = Me.prm.MaxJumpHeight;
         }
     }
 
