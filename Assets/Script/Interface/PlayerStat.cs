@@ -18,6 +18,19 @@ public class PlayerStat : MonoBehaviour
     //Тест версия резистов
     public int Resist;
 
+    //Таланты
+    public bool TalentWar;
+    public bool TalantCraft;
+    public bool WTalent1 = false;
+    public bool WTalent2 = false;
+    public bool WTalent3 = false;
+    public bool TSkill1 = false;
+    public bool CTalent1 = false;
+    public bool CTalent2 = false;
+
+
+    public bool SpecSkill = false;
+
     void Start()
     {
 

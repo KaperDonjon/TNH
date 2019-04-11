@@ -66,8 +66,6 @@ public class PlayerStatsInterface : MonoBehaviour
             TLvL += 1;
             ps.TXP = 0;
         }
-
-
     }
     void OnGUI()
     {
@@ -113,7 +111,6 @@ public class PlayerStatsInterface : MonoBehaviour
                     HPpoint += 1;
                     ps.MaxHP = ps.MaxHP + 20;
                 }
-
             }
             if (THPpoint != HPpoint)
             {
@@ -125,7 +122,6 @@ public class PlayerStatsInterface : MonoBehaviour
                 }
 
             }
-
             //Стамина
             if (TSkillPoint != 0)
             {
@@ -194,14 +190,6 @@ public class PlayerStatsInterface : MonoBehaviour
                     Nature -= 10;
                 }
             }
-
-
-
-
-
-
-
-
             //Принять
             if (GUI.Button(new Rect(Screen.width / 2 + 60, Screen.width / 2 - 150, 60, 20), "Принять"))
             {
@@ -235,14 +223,7 @@ public class PlayerStatsInterface : MonoBehaviour
                 ps.MaxMana = TMaxMana;
                 ps.MaxStamina = TMaxStamina;
                 ps.Resist = TResist;
-            }
-           
-
-
-
-
-
-
+            }         
                 //Выход
             if (GUI.Button(new Rect(Screen.width / 2 + 150, Screen.width / 2 - 120, 50, 25), "Выйти"))
             {
@@ -251,14 +232,12 @@ public class PlayerStatsInterface : MonoBehaviour
         }
         //ЛвЛ
          GUI.Label(new Rect(Screen.width / 2, 20 , 400, 400), TLvL.ToString());
-
-
         //Лвл ап
-        if (GUI.Button(new Rect(Screen.width / 2 + 250, Screen.width / 2 - 150, 75, 20), "+LVL"))
+        if (GUI.Button(new Rect(Screen.width / 2 + 350, Screen.width / 2 - 150, 75, 20), "+LVL"))
         {
             TLvL += 1;
         }
-        if (GUI.Button(new Rect(Screen.width / 2 + 320, Screen.width / 2 - 150, 75, 20), "XP"))
+        if (GUI.Button(new Rect(Screen.width / 2 + 400, Screen.width / 2 - 150, 75, 20), "XP"))
         {
             ps.TXP += 10;
         }

@@ -2445,6 +2445,7 @@ MonoBehaviour:
   HPBarLane: 0
   ManaBarLane: 0
   StaminaBarLane: 0
+  ExpBarLane: 0
 --- !u!4 &1347764717
 Transform:
   m_ObjectHideFlags: 0
@@ -3165,6 +3166,7 @@ GameObject:
   - component: {fileID: 1877595835}
   - component: {fileID: 1877595838}
   - component: {fileID: 1877595836}
+  - component: {fileID: 1877595839}
   m_Layer: 0
   m_Name: Char
   m_TagString: Player
@@ -3244,6 +3246,8 @@ MonoBehaviour:
   TStamina: 100
   TXP: 0
   Resist: 10
+  TalentWar: 0
+  TalantCraft: 0
 --- !u!4 &1877595837
 Transform:
   m_ObjectHideFlags: 0
@@ -3298,6 +3302,22 @@ MonoBehaviour:
   TResist: 10
   TLvL: 0
   TSkillPoint: 0
+--- !u!114 &1877595839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877595832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00633697e30a5da4f8712ad15a3593f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerStats: {fileID: 11400000, guid: 72846ef3c5ac92f4a807e2346d304f6c, type: 2}
+  ps: {fileID: 0}
+  PSI: {fileID: 0}
+  Visible: 0
 --- !u!1 &1937995648
 GameObject:
   m_ObjectHideFlags: 0
