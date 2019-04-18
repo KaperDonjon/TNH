@@ -11,6 +11,8 @@ public class Unit : MonoBehaviour
 
     public Vector3 pos;
 
+    public List<Item> Pocket;
+
     public float UnitHeight;
     // Start is called before the first frame update
     void Start()
@@ -25,6 +27,8 @@ public class Unit : MonoBehaviour
 
         brn = transform.GetComponent<U_Brain>();
         brn.Init(this);
+
+        Pocket = new List<Item>();
     }
 
     // Update is called once per frame
