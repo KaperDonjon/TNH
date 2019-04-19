@@ -43,8 +43,9 @@ public class TalentLine : MonoBehaviour
             GUI.Box(new Rect(Screen.width / 2 - 25, Screen.height / 2 - 25, 50, 50), "War");
             GUI.Box(new Rect(Screen.width / 2 + 100, Screen.height / 2 - 25, 50, 50), "Craft");
 
+
             if (PSI.SkillPoint > 0)
-            {
+            {           
                 if (ps.WTalent1)
                 {
                 }
@@ -93,6 +94,7 @@ public class TalentLine : MonoBehaviour
             {
                 if (ps.WTalent1)
                 {
+
                     if (ps.WTalent3)
                     {
                     }
@@ -140,7 +142,7 @@ public class TalentLine : MonoBehaviour
                             }
                             else
                             {
-                                if (GUI.Button(new Rect(Screen.width / 2 -300, Screen.height / 2 - 300, 50, 50), "Skill1"))
+                                if (GUI.Button(new Rect(Screen.width / 2 -300, Screen.height / 2 - 300, 50, 50), "SpesCkill"))
                                 {
                                     PSI.SkillPoint -= 10;
                                     ps.SpecSkill = true;
