@@ -11,7 +11,20 @@ public class Core_Procces : MonoBehaviour
     {
         Core_Procces.M = this;
 
+        foreach(GameObject go in GameObject.FindGameObjectsWithTag("Unit"))
+        {
+            Unit wrk = go.transform.GetComponent<Unit>();
+            wrk.Init();
+
+            if (wrk.brn.PlayerControl)
+            {
+                LocalPlayersUnit = wrk;
+            }
+        }
+
         F_SpawnLoot(transform.position, "Wood", 3);
+        F_SpawnLoot(transform.position+ Vector3.right, "Sword", 3);
+        F_SpawnLoot(transform.position+ Vector3.right*2, "Sword", 3);
     }
 
     // Update is called once per frame

@@ -7,6 +7,7 @@ public class Core_Base : MonoBehaviour
     public static Core_Base M;
 
     public GameObject LootObjectPrefab;
+    public GameObject IconObjectPrefab;
     public List<Item> ItemList; // базовый список итемов
 
     public List<TileSet> TileSets;
@@ -37,6 +38,7 @@ public class Core_Base : MonoBehaviour
         if (wrk != null)// если после завершения цикла в переменной есть найденный итем
         {
             // копируем его постоянные параметры в заготовку копии
+            rez.ArcType = wrk.ArcType;
             rez.ID = wrk.ID;
             rez.Ico = wrk.Ico;
             rez.Stacks = wrk.Stacks;

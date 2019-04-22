@@ -31,7 +31,9 @@ public class Loot : MonoBehaviour
         Unit WorkUnit = col.transform.GetComponentInParent<Unit>(); //если что-то пересеклось с лутом, проверяем есть ли у этого компонент Юнита(т.е. Юнит ли это)
         if(WorkUnit != null)//если это все таки юнит...
         {
-            //надо еще проверить что бы это был игровой персонаж, что бы лут не поднялся монстром. Но этого пока нет.
+            if (WorkUnit != Core_Procces.M.LocalPlayersUnit) {// если юнит пересекший коллайдер не игровой, то прерываю выполнение функции.
+                return; 
+            }
 
             bool new1 = true;//делаем переменную которая определит, будет ли поднятое новой позицией в кармане юнита или сложится с тем что уже есть
             if (MeItem.Stacks)//если итем может складываться с себеподобными...
@@ -48,7 +50,11 @@ public class Loot : MonoBehaviour
             }
             if (new1)// если поднятое не складывает или не было найдено в кармане...
             {
-                WorkUnit.Pocket.Add(MeItem); // добавляем итем из лута в карман как новую позицию
+                if (!WorkUnit.Pocket.Contains(MeItem))// проверяем нет ли вкармане уже этого предмета во избежание дублирования
+                {
+                    WorkUnit.Pocket.Add(MeItem); // добавляем итем из лута в карман как новую позицию
+                }
+               
             }
 
             //тут бы добавить функцию для показа эффекта поднятия
@@ -60,6 +66,7 @@ public class Loot : MonoBehaviour
 [System.Serializable]
 public class Item
 {
+    public string ArcType; // архетип (материал, оружие, расход...)
     public string ID; // уникальное название
     public int Count;// количество
     public bool Stacks; // отвечает за то можетли Итем складываться с другими такимиже

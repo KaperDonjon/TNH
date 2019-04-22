@@ -13,9 +13,11 @@ public class Unit : MonoBehaviour
 
     public List<Item> Pocket;
 
+    public List<InventrySlot> Slots;
+
     public float UnitHeight;
     // Start is called before the first frame update
-    void Start()
+    public void Init()
     {
         mov = transform.GetComponent<U_Mov>();
         mov.Init(this);
@@ -35,5 +37,63 @@ public class Unit : MonoBehaviour
     void Update()
     {
         pos = transform.position;
+    }
+    [System.Serializable]
+    public class InventrySlot // класс для слота под инвентарь
+    {
+        public string ArcType; // архетип слота для подбора итема
+
+        Item Contaiment; // контейнер для итема
+   
+
+        public void SetItem(Item itm) // назначение итема вконтейнер
+        {
+            Contaiment = itm;
+        }
+
+        public Item GetItem() // получение итема из контейнера
+        {
+            return Contaiment;
+        }
+    }
+
+    public Item GetItemFromSlotByArcType(string ArcTypeKey) // получение итема из всех слотов по архетипу
+    {
+        foreach(InventrySlot go in Slots)
+        {
+            if(go.ArcType == ArcTypeKey)
+            {
+                return go.GetItem(); // после слова return выполнение функции прекращается
+            }
+        }
+
+        return null;
+    }
+
+    public void SetItemToSlotByArcType( string ArcTypeKey, Item SetItem) // функция помещения итема в любой слот по ахретипу
+    {
+        foreach (InventrySlot go in Slots)
+        {
+            if (go.ArcType == ArcTypeKey)
+            {
+                if (go.GetItem() != null)// в случае если подходящий слот уже занят, итем из него перемещается в карман
+                {
+                    Pocket.Add(go.GetItem());
+                    
+                }
+                go.SetItem( SetItem);
+            }
+        }
+    }
+
+    public void RemoveItemFromSlots(Item itm) // функция удаления итема из всех слотов где он есть
+    {
+        foreach (InventrySlot go in Slots)
+        {
+            if (go.GetItem() == itm)
+            {
+                go.SetItem(null);
+            }
+        }
     }
 }
