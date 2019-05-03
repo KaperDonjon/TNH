@@ -17,6 +17,10 @@ public class Unit : MonoBehaviour
 
     public float UnitHeight;
     // Start is called before the first frame update
+    public void Start()
+    {
+        Init();
+    }
     public void Init()
     {
         mov = transform.GetComponent<U_Mov>();
